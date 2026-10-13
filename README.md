@@ -19,6 +19,14 @@ Other scripts: `npm run build && npm start` (production build, same port), `npm 
 
 To see first-run onboarding again, choose **Help → Restart onboarding**, or clear the `mise-onboarding` key in localStorage.
 
+## Try it on Replit
+
+1. Import `https://github.com/parathaprat/mise` into Replit.
+2. Select **Run** to preview it.
+3. Open **Publishing**, keep the default **Autoscale** deployment, and select **Publish**.
+
+The repository includes Replit build and start commands. No secrets or database are required. Each visitor gets independent demo data in their own browser and can reset it from Settings.
+
 ## Three seats, one system
 
 Switch personas from the workspace switcher (top-left), the user menu, Settings, or `⌘K → "View as…"`.
