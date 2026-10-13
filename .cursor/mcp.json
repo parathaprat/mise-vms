@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "hyperui": {
+      "command": "node",
+      "args": ["tools/hyperui-mcp/server.mjs"]
+    }
+  }
+}

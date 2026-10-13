@@ -1,0 +1,20 @@
+{
+  "name": "mise-launch-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts --port 4848",
+    "score": "python3 audio/compose.py",
+    "render": "remotion render src/index.ts Launch out/mise-launch.mp4 --codec h264 --crf 17 --concurrency 5 --audio-codec aac --audio-bitrate 256k",
+    "still": "remotion still src/index.ts Launch out/still.png"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.535",
+    "@remotion/google-fonts": "^4.0.535",
+    "@types/react": "^19.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "^4.0.535",
+    "typescript": "^7.0.2"
+  }
+}
