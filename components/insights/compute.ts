@@ -30,7 +30,7 @@ export function isRangeKey(value: string | null): value is RangeKey {
 
 export const FILL_TARGET = 0.95
 
-/** Minutes of manual Fieldglass handling assumed per item. Planning assumptions, not measurements. */
+/** Minutes of manual handling assumed per item. Planning assumptions, not measurements. */
 export const OPS_MINUTES = {
   workOrders: 6,
   timesheets: 1.5,

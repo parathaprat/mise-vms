@@ -5,6 +5,7 @@ import { parseLocal, shiftWindow, toISODate } from "@/lib/dates"
 import { lineTotals } from "@/lib/invoice"
 import { hashString } from "@/lib/random"
 import { certStatus, estimateRequestCost, payableShiftHours, requiredCertsFor } from "@/lib/rules"
+import { backgroundCheckState } from "@/lib/safety"
 import type {
   CostCenter,
   Invoice,
@@ -192,7 +193,7 @@ export function workerInScope(worker: Worker, data: DemoData, persona: Persona):
   return metros.has(worker.metro)
 }
 
-// Work orders (derived: one per Pro per request, like Fieldglass) ---------------
+// Work orders (derived: one per Pro per request) --------------------------------
 
 export interface WorkOrder {
   id: string
@@ -301,6 +302,17 @@ export interface ComplianceFlag {
 
 export function workerComplianceFlags(worker: Worker, data: DemoData, today: ISODate): ComplianceFlag[] {
   const flags: ComplianceFlag[] = []
+  const background = backgroundCheckState(worker, today)
+  if (background !== "ready") {
+    flags.push({
+      workerId: worker.id,
+      kind: "onboarding",
+      label:
+        background === "expired"
+          ? "Background check expired"
+          : "Background check pending",
+    })
+  }
   for (const c of worker.certs) {
     const st = certStatus(worker, c.type, today)
     if (st === "expired") flags.push({ workerId: worker.id, kind: "cert-expired", label: `${c.type} expired` })
@@ -311,7 +323,16 @@ export function workerComplianceFlags(worker: Worker, data: DemoData, today: ISO
   else if (worker.compassHours >= cap * (data.policies.contractualHoursWarnPct / 100)) {
     flags.push({ workerId: worker.id, kind: "hours-warn", label: `${worker.compassHours}/${cap} contractual hours` })
   }
-  if (worker.onboarding.some((o) => o.status === "Pending")) flags.push({ workerId: worker.id, kind: "onboarding", label: "Onboarding incomplete" })
+  if (
+    worker.onboarding.some((o) => o.status === "Pending") &&
+    background === "ready"
+  ) {
+    flags.push({
+      workerId: worker.id,
+      kind: "onboarding",
+      label: "Onboarding incomplete",
+    })
+  }
   return flags
 }
 

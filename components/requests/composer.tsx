@@ -14,6 +14,7 @@ import {
   MinusIcon,
   PlusIcon,
   SendIcon,
+  ShieldCheckIcon,
   SparklesIcon,
   StarIcon,
   WandSparklesIcon,
@@ -28,7 +29,6 @@ import {
   WorkerAvatar,
 } from "@/components/app/identity"
 import { PageHeader } from "@/components/app/page-header"
-import { StatusBadge } from "@/components/app/status-badge"
 import { Badge } from "@/components/ui/badge"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
@@ -78,6 +78,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { NumberTicker } from "@/components/ui/number-ticker"
 import { useData, useNow, usePersona } from "@/hooks/use-demo"
+import { buildAgencyOffers } from "@/lib/agencies"
 import {
   formatDate,
   formatTimeRange,
@@ -142,7 +143,8 @@ type Touched = Partial<
     | "checkIn"
     | "parking"
     | "breakMinutes"
-    | "favoritesFirst",
+    | "favoritesFirst"
+    | "supplierIds",
     boolean
   >
 >
@@ -392,7 +394,7 @@ export function RequestComposer() {
             costCenterId: ccId,
             supplierIds: keep
               ? d.supplierIds
-              : active.filter((s) => s.tier <= 2).map((s) => s.id),
+              : [active[0]?.id].filter((id): id is string => !!id),
           }
         }
       }
@@ -412,12 +414,31 @@ export function RequestComposer() {
       }
       if (!prev || prev.positionId !== d.positionId) {
         const p = data.positions.find((x) => x.id === d.positionId)
-        if (p && !(touched.duties && d.duties))
-          d = { ...d, duties: p.description }
+        if (p) {
+          if (!(touched.duties && d.duties)) d = { ...d, duties: p.description }
+          if (!touched.supplierIds) {
+            const v = data.venues.find((item) => item.id === d.venueId)
+            const card = v
+              ? data.rateCards.find(
+                  (item) =>
+                    item.positionId === p.id && item.metro === v.metro
+                )
+              : undefined
+            const best = buildAgencyOffers({
+              data,
+              venue: v,
+              position: p,
+              billRate: card?.billRate ?? 0,
+              headcount: d.headcount,
+              today,
+            }).find((offer) => offer.eligible)
+            if (best) d = { ...d, supplierIds: [best.supplier.id] }
+          }
+        }
       }
       return d
     },
-    [data.venues, data.costCenters, data.suppliers, data.positions, today]
+    [data, today]
   )
 
   const [composer, setComposer] = React.useState(() => {
@@ -430,6 +451,7 @@ export function RequestComposer() {
           parking: true,
           breakMinutes: true,
           favoritesFirst: true,
+          supplierIds: true,
         }
       : {}
     return {
@@ -458,10 +480,28 @@ export function RequestComposer() {
         )
       : undefined
   const roster = rosters.find((r) => r.venueId === draft.venueId)
-  const eligibleSuppliers = React.useMemo(
+  const agencyOffers = React.useMemo(
     () =>
-      venue ? data.suppliers.filter((s) => s.metros.includes(venue.metro)) : [],
-    [data.suppliers, venue]
+      buildAgencyOffers({
+        data,
+        venue,
+        position,
+        billRate: rateCard?.billRate ?? 0,
+        headcount: draft.headcount,
+        today,
+      }),
+    [data, venue, position, rateCard?.billRate, draft.headcount, today]
+  )
+  const selectedOffer =
+    agencyOffers.find((offer) =>
+      draft.supplierIds.includes(offer.supplier.id)
+    ) ?? agencyOffers.find((offer) => offer.eligible)
+  const effectiveRateCard = React.useMemo(
+    () =>
+      rateCard && selectedOffer
+        ? { ...rateCard, billRate: selectedOffer.offeredRate }
+        : rateCard,
+    [rateCard, selectedOffer]
   )
 
   const commit = (fn: (d: DraftState) => DraftState, touch?: Touched) =>
@@ -543,8 +583,15 @@ export function RequestComposer() {
 
   const checks = React.useMemo(
     () =>
-      runChecks(draft, { data, now, venue, position, costCenter, rateCard }),
-    [draft, data, now, venue, position, costCenter, rateCard]
+      runChecks(draft, {
+        data,
+        now,
+        venue,
+        position,
+        costCenter,
+        rateCard: effectiveRateCard,
+      }),
+    [draft, data, now, venue, position, costCenter, effectiveRateCard]
   )
   const fails = checks.filter((c) => c.status === "fail")
   const warns = checks.filter((c) => c.status === "warn")
@@ -556,7 +603,7 @@ export function RequestComposer() {
     draft.dates.length === 0
   const canSubmit = !missingRequired && fails.length === 0 && !submitting
 
-  const estimate = draftEstimate(draft, rateCard)
+  const estimate = draftEstimate(draft, effectiveRateCard)
   const totalShifts = draft.headcount * draft.dates.length
   const paidHours =
     draft.startTime && draft.endTime ? payableShiftHours(draft) : 0
@@ -859,10 +906,18 @@ export function RequestComposer() {
                 </Select>
                 {rateCard ? (
                   <FieldDescription>
-                    Pay {rate(rateCard.payRate)} · bill{" "}
-                    {rate(rateCard.billRate)} · supplier net{" "}
+                    Pay {rate(rateCard.payRate)} · card ceiling{" "}
+                    {rate(rateCard.billRate)}
+                    {selectedOffer &&
+                    selectedOffer.offeredRate < rateCard.billRate
+                      ? ` · awarded at ${rate(selectedOffer.offeredRate)}`
+                      : ""}{" "}
+                    · supplier net{" "}
                     {rate(
-                      postMsaRate(rateCard.billRate, data.policies.msaFeePct)
+                      postMsaRate(
+                        selectedOffer?.offeredRate ?? rateCard.billRate,
+                        data.policies.msaFeePct
+                      )
                     )}{" "}
                     after the {data.policies.msaFeePct}% program fee
                   </FieldDescription>
@@ -1292,64 +1347,81 @@ export function RequestComposer() {
 
           <StepCard
             step={5}
-            title="Distribution"
-            description={`Tier 1 gets a ${data.policies.tier1ExclusiveMinutes}-minute exclusive window. Suppliers without a current certificate of insurance are excluded automatically.`}
+            title="Choose an agency"
+            description="Mise compares safety readiness, nearby coverage, past outcomes and rate. Pick the best fit, with no bid desk."
           >
             <div className="flex flex-col gap-2">
-              {eligibleSuppliers.length === 0 ? (
+              {agencyOffers.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                  Pick a venue to see suppliers serving that market.
+                  Pick a venue and position to compare agencies serving that
+                  market.
                 </p>
               ) : null}
-              {eligibleSuppliers.map((s) => {
-                const expired = s.coiExpires < today
-                const disabled = expired || !s.active
-                const checked = draft.supplierIds.includes(s.id)
+              {agencyOffers.map((offer) => {
+                const selected = draft.supplierIds.includes(offer.supplier.id)
+                const recommended =
+                  offer.eligible &&
+                  agencyOffers.find((item) => item.eligible)?.supplier.id ===
+                    offer.supplier.id
                 return (
-                  <label
-                    key={s.id}
+                  <div
+                    key={offer.supplier.id}
                     className={cn(
-                      "flex items-center gap-3 rounded-lg border p-3 transition-colors",
-                      disabled
-                        ? "opacity-60"
-                        : "cursor-pointer hover:bg-muted/40",
-                      checked &&
-                        !disabled &&
-                        "border-primary/40 bg-primary/[0.03]"
+                      "flex flex-col gap-3 rounded-xl border p-4 transition-colors sm:flex-row sm:items-center",
+                      !offer.eligible && "opacity-60",
+                      selected && offer.eligible && "border-primary/40 bg-muted/40"
                     )}
                   >
-                    <Checkbox
-                      checked={checked && !disabled}
-                      disabled={disabled}
-                      onCheckedChange={(v) =>
-                        update(
-                          "supplierIds",
-                          v
-                            ? [...new Set([...draft.supplierIds, s.id])]
-                            : draft.supplierIds.filter((x) => x !== s.id)
-                        )
-                      }
-                    />
-                    <SupplierMark supplier={s} size="md" />
+                    <SupplierMark supplier={offer.supplier} size="md" />
                     <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="flex items-center gap-2 text-sm font-medium">
-                        {s.name}
-                        <Badge variant="outline">Tier {s.tier}</Badge>
+                      <span className="flex flex-wrap items-center gap-2 text-sm font-medium">
+                        {offer.supplier.name}
+                        {recommended ? (
+                          <Badge variant="secondary">Best fit</Badge>
+                        ) : null}
+                        {offer.eligible ? (
+                          <Badge variant="outline">
+                            <ShieldCheckIcon />
+                            Safety ready
+                          </Badge>
+                        ) : null}
                       </span>
-                      <span className="truncate text-xs text-muted-foreground">
-                        {expired
-                          ? "Certificate of insurance expired, paused"
-                          : s.tier === 1
-                            ? `Exclusive for the first ${data.policies.tier1ExclusiveMinutes} min · ${s.kind}`
-                            : `${s.kind} · joins after the Tier 1 window`}
+                      <span className="text-xs text-muted-foreground">
+                        {offer.eligible
+                          ? offer.reason
+                          : offer.blockers.join(" · ")}
                       </span>
                     </span>
-                    {expired ? (
-                      <StatusBadge tone="danger">COI expired</StatusBadge>
-                    ) : null}
-                  </label>
+                    <div className="flex items-center justify-between gap-3 sm:justify-end">
+                      <span className="font-heading text-lg font-semibold tabular">
+                        {rate(offer.offeredRate)}
+                      </span>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={selected ? "default" : "outline"}
+                        disabled={!offer.eligible}
+                        onClick={() =>
+                          update(
+                            "supplierIds",
+                            [offer.supplier.id],
+                            { supplierIds: true }
+                          )
+                        }
+                      >
+                        {selected ? "Selected" : "Choose"}
+                      </Button>
+                    </div>
+                  </div>
                 )
               })}
+              {selectedOffer ? (
+                <p className="text-xs text-muted-foreground">
+                  Why this recommendation: {selectedOffer.reason}. If this
+                  agency cannot fill, Mise opens the remaining shifts to the
+                  next safety-ready agency automatically.
+                </p>
+              ) : null}
             </div>
           </StepCard>
         </div>
@@ -1389,9 +1461,15 @@ export function RequestComposer() {
                   </dd>
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <dt className="text-xs text-muted-foreground">Bill rate</dt>
+                  <dt className="text-xs text-muted-foreground">Awarded rate</dt>
                   <dd className="font-medium tabular">
-                    {rateCard ? rate(rateCard.billRate) : "–"}
+                    {effectiveRateCard ? rate(effectiveRateCard.billRate) : "–"}
+                  </dd>
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <dt className="text-xs text-muted-foreground">Agency</dt>
+                  <dd className="truncate font-medium">
+                    {selectedOffer?.supplier.shortName ?? "–"}
                   </dd>
                 </div>
                 <div className="flex flex-col gap-0.5">
@@ -1491,8 +1569,7 @@ export function RequestComposer() {
                 </span>
               </CardTitle>
               <CardDescription>
-                The checks that used to block postings after the fact, now live
-                as you type.
+                Safety, rate, budget and shift details are checked as you type.
               </CardDescription>
             </CardHeader>
             <CardContent>

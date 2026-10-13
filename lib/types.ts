@@ -115,6 +115,7 @@ export interface OnboardingItem {
   label: string
   status: "Complete" | "Pending"
   completedAt?: ISODate
+  expiresAt?: ISODate
 }
 
 export interface Worker {
@@ -180,6 +181,14 @@ export interface ApprovalStep {
   note?: string
 }
 
+export interface AgencyAward {
+  supplierId: string
+  offeredRate: number
+  score: number
+  reason: string
+  awardedAt: LocalDateTime
+}
+
 export interface StaffingRequest {
   id: string
   venueId: string
@@ -202,6 +211,7 @@ export interface StaffingRequest {
   notes?: string
   favoritesFirst: boolean
   supplierIds: string[]
+  agencyAward?: AgencyAward
   requiredCerts: CertType[]
   state: RequestState
   createdBy: string
@@ -209,7 +219,7 @@ export interface StaffingRequest {
   approvals: ApprovalStep[]
   cancelledReason?: string
   liveFill?: boolean
-  source: "Mise" | "Fieldglass import"
+  source: "Mise" | "Legacy import"
 }
 
 export type ShiftStatus =

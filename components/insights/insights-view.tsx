@@ -43,6 +43,7 @@ import { PositionsCard } from "./positions-card"
 import { QualityCard } from "./quality-card"
 import { SpendCard } from "./spend-card"
 import { TopTableCard } from "./top-table-card"
+import { UnitPulseCard } from "./unit-pulse-card"
 
 export function InsightsView() {
   const router = useRouter()
@@ -154,6 +155,13 @@ export function InsightsView() {
       <CycleTimeCard cycle={insights.cycle} />
 
       <div className="grid gap-4 lg:grid-cols-2">
+        {!isSupplier ? (
+          <UnitPulseCard
+            start={insights.range.start}
+            end={insights.range.end}
+            venueId={venueId}
+          />
+        ) : null}
         <SpendCard
           spend={insights.spend}
           isSupplier={isSupplier}

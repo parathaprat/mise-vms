@@ -190,7 +190,7 @@ export function HelpSheet() {
                       {g.term}
                       {g.formerly ? (
                         <span className="rounded-full bg-muted px-2 py-px text-[10px] font-normal text-muted-foreground">
-                          Fieldglass: {g.formerly}
+                          Legacy term: {g.formerly}
                         </span>
                       ) : null}
                     </dt>

@@ -12,11 +12,11 @@ const fontMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" })
 
 export const metadata: Metadata = {
   title: {
-    default: "Mise · FlexForce workforce platform",
+    default: "Mise · Flexible staffing, in one place",
     template: "%s · Mise",
   },
   description:
-    "Mise is a modern vendor management system for Compass FlexForce: post staffing requests, track Pros live, approve time and tips, and pay suppliers, in one place.",
+    "Mise connects partners with trusted staffing agencies from request to payment, with safety, cost and worker activity in one simple place.",
 }
 
 export const viewport: Viewport = {

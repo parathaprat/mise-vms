@@ -5,6 +5,7 @@ import { create } from "zustand"
 import { persist, type PersistStorage, type StorageValue } from "zustand/middleware"
 
 import { DATA_VERSION, makeIdFactory, type DemoData } from "@/lib/data"
+import { buildAgencyOffers } from "@/lib/agencies"
 import { formatClock, parseLocal, shiftWindow, toISODate, toLocal } from "@/lib/dates"
 import { advance, fateFor, jitterFor } from "@/lib/engine"
 import { money, round2, workerName } from "@/lib/format"
@@ -375,7 +376,20 @@ export const useStore = create<StoreState>()(
             const position = data.positions.find((p) => p.id === input.positionId)!
             const rc = data.rateCards.find((r) => r.positionId === input.positionId && r.metro === venue.metro)
             const payRate = rc?.payRate ?? 0
-            const billRate = rc?.billRate ?? 0
+            const offers = buildAgencyOffers({
+              data,
+              venue,
+              position,
+              billRate: rc?.billRate ?? 0,
+              headcount: input.headcount,
+              today: toISODate(new Date()),
+            })
+            const chosenOffer =
+              offers.find(
+                (offer) =>
+                  offer.eligible && input.supplierIds.includes(offer.supplier.id)
+              ) ?? offers.find((offer) => offer.eligible)
+            const billRate = chosenOffer?.offeredRate ?? rc?.billRate ?? 0
             const dates = [...new Set(input.dates)].sort()
             const cost = estimateRequestCost({ ...input, dates, billRate })
             const requiresProgram =
@@ -405,7 +419,20 @@ export const useStore = create<StoreState>()(
               parking: input.parking,
               notes: input.notes?.trim() || undefined,
               favoritesFirst: input.favoritesFirst,
-              supplierIds: input.supplierIds.length ? input.supplierIds : ["s-instawork"],
+              supplierIds: chosenOffer
+                ? [chosenOffer.supplier.id]
+                : input.supplierIds.length
+                  ? input.supplierIds
+                  : ["s-instawork"],
+              agencyAward: chosenOffer
+                ? {
+                    supplierId: chosenOffer.supplier.id,
+                    offeredRate: chosenOffer.offeredRate,
+                    score: chosenOffer.score,
+                    reason: chosenOffer.reason,
+                    awardedAt: now,
+                  }
+                : undefined,
               requiredCerts: requiredCertsFor(position, venue),
               state: options?.asDraft ? "draft" : requiresProgram ? "pending" : "active",
               createdBy: who,

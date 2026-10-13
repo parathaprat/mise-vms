@@ -1,6 +1,7 @@
 import { addDays } from "date-fns"
 
 import type { DemoData } from "@/lib/data"
+import { buildAgencyOffers } from "@/lib/agencies"
 import {
   formatDate,
   formatTimeRange,
@@ -372,7 +373,44 @@ export function runChecks(draft: DraftState, ctx: DraftContext): Check[] {
       })
   }
 
-  // 10. Budget
+  // 10. Agency safety and fit
+  if (venue && position && rateCard) {
+    const offers = buildAgencyOffers({
+      data,
+      venue,
+      position,
+      billRate: rateCard.billRate,
+      headcount: draft.headcount,
+      today,
+    })
+    const selected = offers.find((offer) =>
+      draft.supplierIds.includes(offer.supplier.id)
+    )
+    checks.push(
+      !selected
+        ? {
+            id: "agency",
+            label: "Agency",
+            status: "fail",
+            detail: "Choose an agency before posting.",
+          }
+        : !selected.eligible
+          ? {
+              id: "agency",
+              label: "Agency safety",
+              status: "fail",
+              detail: `${selected.supplier.shortName} cannot receive this work: ${selected.blockers.join(", ")}.`,
+            }
+          : {
+              id: "agency",
+              label: "Agency safety",
+              status: "pass",
+              detail: `${selected.supplier.shortName}: ${selected.readyWorkers} background-checked, qualified workers nearby · current insurance.`,
+            }
+    )
+  }
+
+  // 11. Budget
   if (
     costCenter &&
     rateCard &&

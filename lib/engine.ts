@@ -19,6 +19,7 @@ import type {
   Venue,
   Worker,
 } from "@/lib/types"
+import { workerSafetyReady } from "@/lib/safety"
 
 type Ids = ReturnType<typeof makeIdFactory>
 
@@ -103,7 +104,7 @@ export function candidateWorkers(opts: PickOptions): Worker[] {
   )
   const certs = requiredCertsFor(position, venue)
   return data.workers.filter((w) => {
-    if (w.status !== "Active") return false
+    if (!workerSafetyReady(w, today)) return false
     if (w.metro !== venue.metro) return false
     if (!w.positionIds.includes(position.id)) return false
     if (!request.supplierIds.includes(w.supplierId)) return false

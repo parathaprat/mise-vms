@@ -251,7 +251,7 @@ export function CommandMenu() {
             </CommandItem>
           ))}
           <CommandItem
-            value="help guide glossary fieldglass terms support tour"
+            value="help guide glossary legacy terms support tour"
             onSelect={() => {
               setOpen(false)
               useOnboarding.getState().openHelp()

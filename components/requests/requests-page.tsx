@@ -258,16 +258,16 @@ export function RequestsPage() {
                 {v.req.hireType === "Select Hire" ? (
                   <Badge variant="outline">Select hire</Badge>
                 ) : null}
-                {v.req.source === "Fieldglass import" ? (
+                {v.req.source === "Legacy import" ? (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <FileInputIcon
                         className="size-3.5 text-muted-foreground"
-                        aria-label="Imported from Fieldglass"
+                        aria-label="Imported from the previous system"
                       />
                     </TooltipTrigger>
                     <TooltipContent>
-                      Imported from Fieldglass at cutover
+                      Imported history
                     </TooltipContent>
                   </Tooltip>
                 ) : null}

@@ -259,7 +259,7 @@ export function checklistFor(persona: PersonaId): GuideTask[] {
 export interface GlossaryTerm {
   term: string
   plain: string
-  /** What Fieldglass called it, when different. */
+  /** The legacy program term, when different. */
   formerly?: string
 }
 

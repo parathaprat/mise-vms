@@ -20,7 +20,7 @@ import type {
   Worker,
 } from "@/lib/types"
 
-export const DATA_VERSION = 4
+export const DATA_VERSION = 5
 
 export type CounterKey =
   | "request"

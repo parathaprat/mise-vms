@@ -249,10 +249,20 @@ function FlagDetail({ kind, row, model }: { kind: FlagKind; row: ProRow; model: 
       />
     )
   }
-  const pending = row.worker.onboarding.filter((o) => o.status === "Pending").map((o) => o.label)
+  const pending = row.worker.onboarding
+    .filter(
+      (item) =>
+        item.status === "Pending" ||
+        (!!item.expiresAt && item.expiresAt < today)
+    )
+    .map((item) =>
+      item.expiresAt && item.expiresAt < today
+        ? `${item.label} expired ${formatDate(item.expiresAt, "MMM d")}`
+        : item.label
+    )
   return (
     <span className="text-sm">
-      <span className="text-muted-foreground">Pending: </span>
+      <span className="text-muted-foreground">Safety gate: </span>
       {pending.join(", ")}
     </span>
   )

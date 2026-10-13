@@ -29,7 +29,7 @@ export function OpsSavedCard({ ops, className }: { ops: OpsSaved; className?: st
   return (
     <Card className={cn("min-w-0", className)}>
       <CardHeader>
-        <CardTitle>Ops time saved vs Fieldglass</CardTitle>
+        <CardTitle>Manual work avoided</CardTitle>
         <CardDescription>Since {formatDate(ops.since, "MMM d")}, from live counts in this scope.</CardDescription>
         <CardAction>
           <Badge variant="outline">Estimate</Badge>
@@ -96,7 +96,7 @@ export function OpsSavedCard({ ops, className }: { ops: OpsSaved; className?: st
         )}
       </CardContent>
       <CardFooter className="text-xs text-muted-foreground">
-        Minutes per item are planning assumptions for the manual Fieldglass step, not measured time. Counts update live.
+        Minutes per item are planning assumptions for the manual step, not measured time. Counts update live.
       </CardFooter>
     </Card>
   )

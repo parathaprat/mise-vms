@@ -299,7 +299,7 @@ function DemoCard() {
       <CardContent>
         <dl className="grid grid-cols-2 gap-4">
           <KeyValue label="Generated for">{seededFor ? formatDate(seededFor, "EEE, MMM d") : "–"}</KeyValue>
-          <KeyValue label="Fieldglass cutover">{cutoverDate ? formatDate(cutoverDate, "MMM d, yyyy") : "–"}</KeyValue>
+          <KeyValue label="Shared workflow started">{cutoverDate ? formatDate(cutoverDate, "MMM d, yyyy") : "–"}</KeyValue>
         </dl>
       </CardContent>
       <CardFooter className="flex-col items-start gap-3">

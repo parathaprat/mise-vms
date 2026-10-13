@@ -32,6 +32,7 @@ import type { Invoice, InvoiceDispute, InvoiceLine, TimeEntry, TipBatch } from "
 
 import { DisputeLineDialog, ResolveDisputeDialog } from "./invoice-dialogs"
 import { InvoiceDocument } from "./invoice-document"
+import { InvoiceTrustCard } from "./invoice-trust-card"
 import type { LineActions } from "./invoice-line-row"
 import { DisputesCard, PaymentCard, StatusTimelineCard, TraceabilityCard } from "./invoice-sidebar"
 import { downloadFile, formatPeriod, invoiceLinesCsv, nextPaymentDate, paymentForInvoice } from "./invoice-utils"
@@ -197,6 +198,14 @@ function InvoiceDetailBody({ invoice }: { invoice: Invoice }) {
           </div>
         }
       />
+
+      <div className="mb-6 print:hidden">
+        <InvoiceTrustCard
+          invoice={invoice}
+          entryMap={entryMap}
+          lookups={lookups}
+        />
+      </div>
 
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_340px] print:block">
         <InvoiceDocument

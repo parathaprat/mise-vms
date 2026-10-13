@@ -14,6 +14,7 @@ import {
   MessageSquareIcon,
   PencilIcon,
   SendIcon,
+  ShieldCheckIcon,
   SparklesIcon,
   TimerIcon,
   UserPlusIcon,
@@ -710,8 +711,17 @@ function ActivityTab({ view }: { view: RequestView }) {
 function DetailsTab({ view }: { view: RequestView }) {
   const lookups = useLookups()
   const policies = useData((d) => d.policies)
+  const rateCards = useData((d) => d.rateCards)
   const { req, costCenter } = view
   const markup = req.payRate ? req.billRate / req.payRate - 1 : 0
+  const agency = req.agencyAward
+    ? lookups.suppliers.get(req.agencyAward.supplierId)
+    : lookups.suppliers.get(req.supplierIds[0] ?? "")
+  const cardRate = rateCards.find(
+    (item) =>
+      item.positionId === req.positionId &&
+      item.metro === view.venue.metro
+  )?.billRate
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <Card>
@@ -736,14 +746,17 @@ function DetailsTab({ view }: { view: RequestView }) {
           <CardHeader>
             <CardTitle>Rates</CardTitle>
             <CardDescription>
-              From the published rate card, transparent end to end.
+              Awarded within the published rate card, transparent end to end.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
               <KeyValue label="Pro pay">{rate(req.payRate)}</KeyValue>
               <KeyValue label="Markup">{Math.round(markup * 100)}%</KeyValue>
-              <KeyValue label="Bill rate">{rate(req.billRate)}</KeyValue>
+              <KeyValue label="Awarded rate">{rate(req.billRate)}</KeyValue>
+              <KeyValue label="Card ceiling">
+                {cardRate !== undefined ? rate(cardRate) : "–"}
+              </KeyValue>
               <KeyValue label={`Program fee (${policies.msaFeePct}%)`}>
                 {rate(
                   round2(
@@ -762,14 +775,42 @@ function DetailsTab({ view }: { view: RequestView }) {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Requirements & distribution</CardTitle>
+            <CardTitle>Agency &amp; safety</CardTitle>
+            <CardDescription>
+              Who received the work, and why they were eligible.
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
+            {agency ? (
+              <div className="flex items-start gap-3 rounded-lg bg-muted/50 p-3">
+                <SupplierMark supplier={agency} size="md" />
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span className="flex flex-wrap items-center gap-2 text-sm font-medium">
+                    {agency.name}
+                    {req.agencyAward ? (
+                      <Badge variant="secondary">Best fit awarded</Badge>
+                    ) : null}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {req.agencyAward?.reason ??
+                      "Selected for this request"}
+                  </span>
+                </div>
+                <span className="text-sm font-medium tabular">
+                  {rate(req.billRate)}
+                </span>
+              </div>
+            ) : null}
             <div className="flex flex-wrap gap-1.5">
-              <Badge variant="outline">{req.hireType}</Badge>
-              <Badge variant="outline">{req.reason}</Badge>
-              {req.favoritesFirst ? (
-                <Badge variant="outline">Favorites first</Badge>
+              <Badge variant="outline">
+                <ShieldCheckIcon />
+                Background checked
+              </Badge>
+              <Badge variant="outline">Insured agency</Badge>
+              {cardRate !== undefined ? (
+                <Badge variant="outline">
+                  {req.billRate <= cardRate ? "Within rate card" : "Rate exception"}
+                </Badge>
               ) : null}
               {req.requiredCerts.map((c) => (
                 <Badge key={c} variant="secondary">
@@ -777,24 +818,10 @@ function DetailsTab({ view }: { view: RequestView }) {
                 </Badge>
               ))}
             </div>
-            <ul className="flex flex-col gap-2">
-              {req.supplierIds.map((id) => {
-                const s = lookups.suppliers.get(id)
-                if (!s) return null
-                return (
-                  <li key={id} className="flex items-center gap-2.5 text-sm">
-                    <SupplierMark supplier={s} size="sm" />
-                    <span className="font-medium">{s.name}</span>
-                    <Badge variant="outline">Tier {s.tier}</Badge>
-                    <span className="ml-auto text-xs text-muted-foreground">
-                      {s.tier === 1
-                        ? `First ${policies.tier1ExclusiveMinutes} min exclusive`
-                        : "After Tier 1 window"}
-                    </span>
-                  </li>
-                )
-              })}
-            </ul>
+            <p className="text-xs text-muted-foreground">
+              If the awarded agency cannot fill, Mise opens only the remaining
+              shifts to the next insured agency with safety-ready workers.
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -950,10 +977,10 @@ export function RequestDetail({ id }: { id: string }) {
             <span>
               Posted by {req.createdBy} · <TimeAgo value={req.createdAt} />
             </span>
-            {req.source === "Fieldglass import" ? (
+            {req.source === "Legacy import" ? (
               <Badge variant="outline" className="gap-1">
                 <FileInputIcon />
-                Imported from Fieldglass
+                Imported history
               </Badge>
             ) : null}
           </span>

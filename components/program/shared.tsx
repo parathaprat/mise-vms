@@ -171,7 +171,7 @@ export function IconTile({
   )
 }
 
-/** Kept so policy sections can pass a note. The product is a standalone VMS, so these stay off screen. */
+/** Kept so policy sections can pass a note without crowding the partner view. */
 export function ReplacesNote({
   children,
 }: {

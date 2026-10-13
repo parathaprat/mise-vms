@@ -469,9 +469,17 @@ export function generateDemoData(nowInput: Date): DemoData {
       const status = statusRoll < 0.04 ? "Onboarding" : statusRoll < 0.06 ? "Inactive" : "Active"
       const onboarding: OnboardingItem[] = ONBOARDING.map(([key, label], idx) => {
         const pending = status === "Onboarding" && idx >= ONBOARDING.length - rng.int(1, 2)
-        return pending
-          ? { key, label, status: "Pending" }
-          : { key, label, status: "Complete", completedAt: toISODate(addDays(today, -rng.int(30, 700))) }
+        if (pending) return { key, label, status: "Pending" }
+        const completedAt = toISODate(addDays(today, -rng.int(30, key === "background" ? 330 : 700)))
+        return {
+          key,
+          label,
+          status: "Complete",
+          completedAt,
+          ...(key === "background"
+            ? { expiresAt: toISODate(addDays(parseLocal(completedAt), 365)) }
+            : {}),
+        }
       })
       const hoursRoll = rng.next()
       const compassHours =
@@ -649,7 +657,7 @@ export function generateDemoData(nowInput: Date): DemoData {
       createdBy: args.createdBy ?? (PERSONA_VENUES.has(venue.id) && rng.chance(0.45) ? PERSONAS.venue.name : cc.approverName),
       createdAt: createdISO,
       approvals,
-      source: sortedDates[0] < cutoverISO ? "Fieldglass import" : "Mise",
+      source: sortedDates[0] < cutoverISO ? "Legacy import" : "Mise",
     }
     requests.push(req)
 
@@ -874,7 +882,7 @@ export function generateDemoData(nowInput: Date): DemoData {
   const ids2 = makeIdFactory(data.counters)
   const reqMap = new Map(data.requests.map((r) => [r.id, r]))
 
-  // Approvals history: slow pre-cutover (Fieldglass), fast after.
+  // Approvals history: slow before the shared workflow, fast after.
   const resolvedEntries: TimeEntry[] = data.timeEntries.map((entry) => {
     const req = reqMap.get(entry.requestId)!
     const cc = ccMap.get(req.costCenterId)!
