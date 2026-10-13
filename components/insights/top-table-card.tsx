@@ -29,7 +29,6 @@ export function TopTableCard({ top, onSelectVenue }: TopTableCardProps) {
   return (
     <ChartCard
       title={view === "primary" ? `Top ${primaryLabel.toLowerCase()}` : "Top positions"}
-      description={canFilter ? "Ranked by spend in range. Select a venue to focus the page." : "Ranked by spend in range."}
       action={
         <ToggleGroup
           type="single"

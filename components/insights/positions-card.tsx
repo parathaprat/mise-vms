@@ -33,7 +33,6 @@ export function PositionsCard({ positions, totalHours }: { positions: PositionPo
   return (
     <ChartCard
       title="Hours by position"
-      description={positions.length >= 8 ? "Top 8 positions by hours worked in range." : "Hours worked in range, by position."}
       empty={
         positions.length === 0
           ? {

@@ -322,7 +322,6 @@ export function VenueHome() {
       <HomeSection
         eyebrow="Right now"
         title="Run today"
-        description="Live staffing and the decisions that need you."
       >
         <div className="grid items-stretch gap-4 xl:grid-cols-3">
           <SectionCard
@@ -337,7 +336,6 @@ export function VenueHome() {
                 ) : null}
               </span>
             }
-            description="Staffing for every event at your venues, updating as Pros check in."
             action={
               <ViewAllButton href="/schedule?view=live" label="Live board" />
             }
@@ -401,7 +399,6 @@ export function VenueHome() {
           <SectionCard
             className="h-full"
             title="Needs your call"
-            description="Decisions only you can make."
             action={<ViewAllButton href="/inbox" label="Inbox" />}
             contentClassName="flex flex-1 flex-col"
           >
@@ -418,13 +415,11 @@ export function VenueHome() {
       <HomeSection
         eyebrow="Ahead"
         title="Stay ahead of the week"
-        description="What is coming next and how the week is shaping up."
       >
         <div className="grid items-stretch gap-4 xl:grid-cols-3">
           <SectionCard
             className="h-full xl:col-span-2"
             title="Coming up"
-            description="The next 7 days. Open shifts keep filling on their own."
             action={<ViewAllButton href="/schedule" label="Schedule" />}
             contentClassName="flex flex-1 flex-col"
           >
@@ -442,7 +437,6 @@ export function VenueHome() {
           <SectionCard
             className="h-full"
             title="Week overview"
-            description="A simple pulse across your venues."
             contentClassName="flex flex-1 flex-col gap-1"
           >
             {[
@@ -498,7 +492,6 @@ export function VenueHome() {
       <HomeSection
         eyebrow="Trends"
         title="Know where labor is going"
-        description="Weekly labor spend across your venues."
       >
         <SectionCard
           title="Labor spend by week"

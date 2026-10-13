@@ -45,15 +45,12 @@ interface CostCenterRow {
   ratio: number
 }
 
-const DESCRIPTION =
-  "Venues and cost centers with the defaults every request inherits, check-in route, parking, attire and roster preferences. Update once; every new shift gets it right."
-
 export function LocationsPage() {
   const persona = usePersona()
   if (persona.id === "supplier") {
     return (
       <>
-        <PageHeader title="Locations" description={DESCRIPTION} />
+        <PageHeader title="Locations" />
         <RestrictedState
           title="Locations are managed by Compass"
           description="Check-in, parking and attire details are attached to every request you're staffing, so your Pros always have them."
@@ -321,7 +318,6 @@ function LocationsView() {
     <>
       <PageHeader
         title="Locations"
-        description={DESCRIPTION}
         actions={
           persona.id === "venue" ? (
             <Badge variant="outline" className="h-7 px-2.5 text-muted-foreground">
@@ -335,7 +331,7 @@ function LocationsView() {
         <SectionHeading
           id="venues-heading"
           title="Venues"
-          description={`${plural(scopedVenues.length, "venue")} · this week's committed spend against active weekly budgets. Select a venue to filter its cost centers.`}
+          description={`${plural(scopedVenues.length, "venue")} · this week's committed spend`}
         />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {venueSummaries.map((s, i) => (

@@ -348,22 +348,12 @@ function RatesView() {
     return cols
   }, [policies.msaFeePct, policies.overtimeMultiplier, isProgram, isSupplier, venueCanEdit, canEdit, showEdit, showRevise, today])
 
-  // Copy ----------------------------------------------------------------------
-  const description = isSupplier
-    ? `The ${PROGRAM_NAME} rates you bill against, by position and market. Propose a revision here, the program office decides in Mise and every upcoming request reprices automatically.`
-    : isVenue
-      ? venueCanEdit
-        ? `Pay and bill rates your requests inherit. Program policy lets you publish changes for ${[...myMetros].map(metroLabel).join(", ")}: every upcoming request reprices instantly.`
-        : `Pay and bill rates your requests inherit, by position and market. Set by the ${PROGRAM_NAME} program office, when a rate changes, every upcoming request reprices automatically.`
-      : "One source of truth for Pro pay and bill rates by position and market. Publishing a change reprices every upcoming request instantly, no work-order revisions, no rate-revision emails."
-
   const marketScopeLabel = market === "all" ? "all markets" : metroLabel(market)
 
   return (
     <>
       <PageHeader
         title="Rate cards"
-        description={description}
         actions={
           <>
             {isVenue && !venueCanEdit ? (

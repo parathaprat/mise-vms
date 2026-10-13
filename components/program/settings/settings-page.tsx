@@ -21,7 +21,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
@@ -29,7 +29,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useData, usePersona, usePolicies } from "@/hooks/use-demo"
 import { formatDate } from "@/lib/dates"
 import { plural } from "@/lib/format"
-import { PERSONAS, PROGRAM_NAME } from "@/lib/reference"
+import { PERSONAS } from "@/lib/reference"
 import { useStore } from "@/lib/store"
 import type { Persona, PersonaId } from "@/lib/types"
 
@@ -66,7 +66,7 @@ export function SettingsPage() {
   const persona = usePersona()
   return (
     <>
-      <PageHeader title="Settings" description="Your profile, notifications and the systems Mise connects to." />
+      <PageHeader title="Settings" />
       <div className="grid items-start gap-4 lg:grid-cols-3">
         <div className="flex min-w-0 flex-col gap-4 lg:col-span-2">
           <ProfileCard persona={persona} />
@@ -109,7 +109,6 @@ function ProfileCard({ persona }: { persona: Persona }) {
         <CardTitle>
           <h2>Profile</h2>
         </CardTitle>
-        <CardDescription>Signed in with Google Workspace SSO. Details come from your company directory.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
         <div className="flex items-center gap-4">
@@ -135,7 +134,6 @@ function ProfileCard({ persona }: { persona: Persona }) {
           <Field orientation="responsive">
             <FieldContent>
               <FieldLabel htmlFor="settings-persona">Switch demo persona</FieldLabel>
-              <FieldDescription>See Mise the way each team does. Data and changes carry over between personas.</FieldDescription>
             </FieldContent>
             <Select value={persona.id} onValueChange={onPersonaChange}>
               <SelectTrigger id="settings-persona" className="w-full @md/field-group:w-72">
@@ -212,7 +210,6 @@ function NotificationsCard({ persona }: { persona: Persona }) {
         <CardTitle>
           <h2>Notifications</h2>
         </CardTitle>
-        <CardDescription>Choose what reaches you outside Mise. Your Inbox always has everything.</CardDescription>
       </CardHeader>
       <CardContent>
         <FieldGroup className="gap-4">
@@ -245,7 +242,6 @@ function AppearanceCard() {
         <CardTitle>
           <h2>Appearance</h2>
         </CardTitle>
-        <CardDescription>Light, dark, or match your operating system.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         <ToggleGroup
@@ -294,7 +290,6 @@ function DemoCard() {
         <CardTitle>
           <h2>Demo controls</h2>
         </CardTitle>
-        <CardDescription>This {PROGRAM_NAME} demo is generated relative to today and stored only in this browser.</CardDescription>
       </CardHeader>
       <CardContent>
         <dl className="grid grid-cols-2 gap-4">

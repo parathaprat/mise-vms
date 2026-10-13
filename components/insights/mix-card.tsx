@@ -12,10 +12,10 @@ import type { Lookups } from "@/lib/selectors"
 import { ChartCard, TooltipRow } from "./chart-card"
 import type { Insights, MixSlice } from "./compute"
 
-const COPY: Record<Insights["mix"]["dimension"], { title: string; description: string }> = {
-  supplier: { title: "Supplier mix", description: "Share of hours worked in range, by supplier." },
-  venue: { title: "Where your Pros work", description: "Share of your Pros' hours in range, by venue." },
-  costCenter: { title: "Where your Pros work", description: "Share of your Pros' hours in range, by cost center." },
+const COPY: Record<Insights["mix"]["dimension"], string> = {
+  supplier: "Supplier mix",
+  venue: "Where your Pros work",
+  costCenter: "Where your Pros work",
 }
 
 export function MixCard({ mix, lookups }: { mix: Insights["mix"]; lookups: Lookups }) {
@@ -23,13 +23,12 @@ export function MixCard({ mix, lookups }: { mix: Insights["mix"]; lookups: Looku
     () => Object.fromEntries(mix.slices.map((s) => [s.key, { label: s.label, color: s.color }])),
     [mix.slices]
   )
-  const copy = COPY[mix.dimension]
+  const title = COPY[mix.dimension]
   const leader = mix.slices[0]
 
   return (
     <ChartCard
-      title={copy.title}
-      description={copy.description}
+      title={title}
       empty={
         mix.slices.length === 0
           ? {

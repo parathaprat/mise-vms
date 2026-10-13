@@ -102,18 +102,11 @@ function WorkforceView() {
 
   const markets = [...new Set(scopeVenues.map((v) => v.metro))]
   const marketLabel = model.metros.find((m) => m.id === markets[0])?.label ?? "your"
-  const description =
-    persona.id === "venue"
-      ? `Pros who work the ${markets.length === 1 ? marketLabel : "your"} market. Favorites get first look at new shifts, do-not-return lists are enforced on every request, and compliance is tracked for you.`
-      : persona.id === "program"
-        ? `Every Pro across FlexForce suppliers and markets. Contractual hours are counted against the ${policies.contractualHoursCap}-hour cap across all Compass venues, alongside certification health and venue rosters.`
-        : `Your Pros working Compass venues: certifications, contractual hours, and how venues rate and roster them.`
 
   return (
     <>
       <PageHeader
         title="Workforce"
-        description={description}
         actions={
           <>
             <Button variant="outline" onClick={() => exportCsv(visible, model)} disabled={visible.length === 0}>

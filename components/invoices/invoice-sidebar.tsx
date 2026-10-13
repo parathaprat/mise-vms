@@ -7,12 +7,12 @@ import { ArrowRightIcon, CheckCheckIcon, CheckIcon, FlagIcon, PauseIcon, ShieldC
 import { CopyId, KeyValue, TimeAgo } from "@/components/app/misc"
 import { StatusBadge } from "@/components/app/status-badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { formatDate, formatDateTime } from "@/lib/dates"
 import { money, num, pct, plural } from "@/lib/format"
 import type { InvoiceTotals } from "@/lib/invoice"
-import type { Invoice, InvoiceDispute, Payment, Persona, TimeEntry, TipBatch } from "@/lib/types"
+import type { Invoice, InvoiceDispute, Payment, TimeEntry, TipBatch } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
 import { isAutoApproval, PAYMENT_TONE } from "./invoice-utils"
@@ -132,13 +132,11 @@ export function PaymentCard({
   invoice,
   payment,
   totals,
-  persona,
   payDate,
 }: {
   invoice: Invoice
   payment?: Payment
   totals: InvoiceTotals
-  persona: Persona
   payDate: Date
 }) {
   const settled = payment?.status === "Settled"
@@ -146,7 +144,6 @@ export function PaymentCard({
     <Card size="sm">
       <CardHeader>
         <CardTitle>Payment</CardTitle>
-        <CardDescription>{persona.id === "supplier" ? "Net to you after the program fee" : "Net remitted to the supplier"}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <div className="flex items-baseline justify-between gap-3">
@@ -201,12 +198,10 @@ export function PaymentCard({
 
 export function DisputesCard({
   invoice,
-  persona,
   canResolve,
   onResolve,
 }: {
   invoice: Invoice
-  persona: Persona
   canResolve: boolean
   onResolve: (dispute: InvoiceDispute) => void
 }) {
@@ -224,13 +219,6 @@ export function DisputesCard({
           Disputes
           {open > 0 ? <StatusBadge tone="danger">{num(open)} open</StatusBadge> : null}
         </CardTitle>
-        <CardDescription>
-          {disputes.length === 0
-            ? persona.id === "supplier"
-              ? "No disputes raised on this invoice."
-              : "Lines can be disputed until the invoice is approved."
-            : `${plural(disputes.length, "dispute")} on this invoice`}
-        </CardDescription>
       </CardHeader>
       {disputes.length > 0 ? (
         <CardContent>
@@ -346,7 +334,6 @@ export function TraceabilityCard({
           <ShieldCheckIcon className={cn("size-4", fullyTraced ? "text-success" : "text-warning")} aria-hidden />
           Traceability
         </CardTitle>
-        <CardDescription>Every dollar ties back to a source record.</CardDescription>
         <CardAction>
           <StatusBadge tone={fullyTraced ? "success" : "warning"}>{pct(stats.tracedShare)} traced</StatusBadge>
         </CardAction>

@@ -156,18 +156,10 @@ function TipsView() {
     { value: "returned", label: "Returned" },
   ]
 
-  const description =
-    persona.id === "venue"
-      ? "Enter event tip pools straight from timesheet hours. Once a batch is approved, suppliers pay Pros the next business day and bill the tips at cost, never with a program fee."
-      : persona.id === "program"
-        ? "Every tip batch across Compass venues: what's waiting on venue approval, when Pros get paid, and how tips bill at cost on supplier invoices."
-        : "Tips Compass venues entered for your Pros. Pay them the business day after approval, and Mise bills it back at cost on your weekly invoice."
-
   return (
     <>
       <PageHeader
         title="Tips"
-        description={description}
         actions={
           <>
             <Button variant="outline" onClick={() => exportCsv(byTab[tab], model)} disabled={!byTab[tab].length}>

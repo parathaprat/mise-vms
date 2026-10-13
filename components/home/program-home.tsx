@@ -290,13 +290,11 @@ export function ProgramHome() {
       <HomeSection
         eyebrow="Right now"
         title="Run the program"
-        description="Venue health, approvals and supplier quality in one view."
       >
         <div className="grid items-stretch gap-4 xl:grid-cols-3">
           <SectionCard
             className="h-full min-w-0 xl:col-span-2"
             title="Venues at a glance"
-            description="Live on-site counts and next-7-day staffing across the program."
             action={<ViewAllButton href="/locations" label="Locations" />}
             contentClassName="overflow-x-auto"
           >
@@ -379,7 +377,6 @@ export function ProgramHome() {
                   ) : null}
                 </span>
               }
-              description="Approvals and program risks."
               action={<ViewAllButton href="/inbox" label="Inbox" />}
               contentClassName="pt-0"
             >
@@ -392,7 +389,6 @@ export function ProgramHome() {
             </SectionCard>
             <SectionCard
               title="Suppliers · last 30 days"
-              description="Measured on real shift outcomes."
               action={<ViewAllButton href="/suppliers" label="Scorecards" />}
               contentClassName="flex flex-col gap-3"
             >
@@ -425,7 +421,6 @@ export function ProgramHome() {
       <HomeSection
         eyebrow="Trends"
         title="Follow labor spend"
-        description="Weekly spend across the brands in your program."
       >
         <SectionCard
           title="Labor spend by brand"

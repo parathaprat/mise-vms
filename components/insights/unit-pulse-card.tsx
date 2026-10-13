@@ -7,7 +7,6 @@ import {
   Card,
   CardAction,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -102,10 +101,6 @@ export function UnitPulseCard({
           <GaugeIcon className="size-4" aria-hidden />
           Unit pulse
         </CardTitle>
-        <CardDescription>
-          Temp labor against guest activity, compared with this unit&apos;s own
-          recent weeks.
-        </CardDescription>
         <CardAction>
           <StatusBadge tone={onTrack ? "success" : "warning"}>
             {onTrack ? "On track" : "Needs a look"}

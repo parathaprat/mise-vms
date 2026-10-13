@@ -7,7 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 
 import { EmptyState, LiveDot, TimeAgo } from "@/components/app/misc"
 import { ACTIVITY_ICON } from "@/components/shell/notifications"
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { formatClock } from "@/lib/dates"
 import type { Lookups } from "@/lib/selectors"
@@ -33,11 +33,10 @@ interface LiveActivityProps {
   activities: Activity[]
   lookups: Lookups
   isToday: boolean
-  dayLabel: string
   className?: string
 }
 
-export function LiveActivity({ activities, lookups, isToday, dayLabel, className }: LiveActivityProps) {
+export function LiveActivity({ activities, lookups, isToday, className }: LiveActivityProps) {
   const [filter, setFilter] = React.useState<FeedFilter>("all")
   const reduceMotion = useReducedMotion()
   const items = React.useMemo(
@@ -52,7 +51,6 @@ export function LiveActivity({ activities, lookups, isToday, dayLabel, className
           Live activity
           {isToday ? <LiveDot /> : null}
         </CardTitle>
-        <CardDescription>{isToday ? "Check-ins, no-shows and staffing as they happen" : `Everything logged ${dayLabel}`}</CardDescription>
         <CardAction>
           <ToggleGroup
             type="single"

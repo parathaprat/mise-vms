@@ -27,8 +27,6 @@ import { changedKeys, draftErrors, draftFrom, draftPatch, type BooleanKey, type 
 import { PolicyHistory } from "./policy-history"
 import { POLICY_SECTIONS, PolicySections, type PolicyStats } from "./policy-sections"
 
-const DESCRIPTION = "The rules Mise enforces automatically. Every change is logged and takes effect immediately."
-
 function listJoin(items: string[]): string {
   if (items.length <= 1) return items.join("")
   return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`
@@ -39,7 +37,7 @@ export function PoliciesPage() {
   if (persona.id === "supplier") {
     return (
       <>
-        <PageHeader title="Policies" description={DESCRIPTION} />
+        <PageHeader title="Policies" />
         <RestrictedState
           title={`Policies are managed by the ${PROGRAM_NAME} program office`}
           description="The rules that affect you, the Tier 1 window, timesheet auto-approval and the program fee, are spelled out on every request and invoice."
@@ -144,7 +142,6 @@ function PoliciesView() {
     <>
       <PageHeader
         title="Policies"
-        description={DESCRIPTION}
         actions={
           latest ? (
             <p className="text-xs text-muted-foreground">

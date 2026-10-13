@@ -24,7 +24,7 @@ function CutoverTick({ viewBox }: { viewBox?: { x?: number; y?: number } }) {
   )
 }
 
-export function FillCard({ fill, isSupplier }: { fill: Insights["fill"]; isSupplier: boolean }) {
+export function FillCard({ fill }: { fill: Insights["fill"] }) {
   const gradientId = `fill-${React.useId().replace(/[^a-zA-Z0-9_-]/g, "")}`
   const measured = fill.points.filter((p) => p.rate !== null)
   const min = measured.reduce((m, p) => Math.min(m, p.rate ?? 100), 100)
@@ -38,11 +38,6 @@ export function FillCard({ fill, isSupplier }: { fill: Insights["fill"]; isSuppl
     <ChartCard
       title="Fill rate"
       contentClassName="gap-3"
-      description={
-        isSupplier
-          ? "Share of slots filled on requests sent to you, past and current weeks. No-shows count as unfilled."
-          : "Share of requested slots filled, past and current weeks. No-shows count as unfilled."
-      }
       action={
         fill.rate !== null ? (
           <div className="flex flex-col items-end">

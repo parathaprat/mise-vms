@@ -80,7 +80,6 @@ export function LiveBoard({ date, today, now, venueId, persona, views, lookups, 
           activities={feed}
           lookups={lookups}
           isToday={isToday}
-          dayLabel={label}
           className="min-w-0 xl:sticky xl:top-20 xl:col-start-2 xl:row-span-2 xl:row-start-1"
         />
       </div>

@@ -94,7 +94,6 @@ export function CycleTimeCard({
     <ChartCard
       className={className}
       title="Approval cycle time"
-      description="Median time from clock-out to timesheet approval, by week."
       empty={
         data.length === 0
           ? {

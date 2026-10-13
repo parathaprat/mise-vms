@@ -33,7 +33,6 @@ import { useOnboarding, useOnboardingHydrated } from "./onboarding-store"
 interface Step {
   icon: LucideIcon
   title: string
-  body: string
 }
 
 const JOBS: Record<PersonaId, { lead: string; steps: Step[] }> = {
@@ -43,17 +42,14 @@ const JOBS: Record<PersonaId, { lead: string; steps: Step[] }> = {
       {
         icon: MessageSquareTextIcon,
         title: "Ask for people",
-        body: "Type what you need in one sentence. Mise builds the request.",
       },
       {
         icon: UsersRoundIcon,
         title: "Watch it fill",
-        body: "Suppliers fill it automatically. Favorites get first offer.",
       },
       {
         icon: CheckCheckIcon,
         title: "Approve & done",
-        body: "Hours arrive from check-in. Approve the clean ones in one click.",
       },
     ],
   },
@@ -63,17 +59,14 @@ const JOBS: Record<PersonaId, { lead: string; steps: Step[] }> = {
       {
         icon: ScaleIcon,
         title: "Set the rules",
-        body: "Rates, supplier tiers and approval limits. Applied everywhere.",
       },
       {
         icon: BadgeCheckIcon,
         title: "Approve exceptions",
-        body: "Only what breaks a rule reaches you. Everything else is automatic.",
       },
       {
         icon: WalletIcon,
         title: "See every dollar",
-        body: "Spend, fill rate and supplier quality, live across every venue.",
       },
     ],
   },
@@ -83,17 +76,14 @@ const JOBS: Record<PersonaId, { lead: string; steps: Step[] }> = {
       {
         icon: ClipboardListIcon,
         title: "Fill open shifts",
-        body: "Auto-fill confirms your best available Pros. Work orders create themselves.",
       },
       {
         icon: HandshakeIcon,
         title: "Answer venues",
-        body: "Disputed hours come to you with context. Reply in one step.",
       },
       {
         icon: ReceiptTextIcon,
         title: "Get paid weekly",
-        body: "Invoices build themselves from approved time. Payments match automatically.",
       },
     ],
   },
@@ -137,8 +127,7 @@ export function WelcomeDialog() {
               Welcome to {BRAND_NAME}, {persona.firstName}
             </DialogTitle>
             <DialogDescription className="text-sm text-pretty text-muted-foreground">
-              {jobs.lead} Your venues, rates, suppliers and Pros are already
-              here. There&apos;s nothing to set up.
+              {jobs.lead}
             </DialogDescription>
           </div>
         </div>
@@ -165,9 +154,6 @@ export function WelcomeDialog() {
                 </span>
                 <div className="flex flex-col gap-0.5">
                   <span className="text-sm font-medium">{step.title}</span>
-                  <span className="text-xs text-pretty text-muted-foreground">
-                    {step.body}
-                  </span>
                 </div>
               </motion.li>
             ))}

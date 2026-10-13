@@ -15,7 +15,6 @@ import {
   Card,
   CardAction,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -105,10 +104,6 @@ export function InvoiceTrustCard({
           )}
           Invoice check
         </CardTitle>
-        <CardDescription>
-          The workers, hours, rate and approval behind this bill, before you
-          pay it.
-        </CardDescription>
         <CardAction>
           <StatusBadge tone={ready ? "success" : "warning"}>
             {ready ? "Ready to approve" : `${exceptions} to review`}

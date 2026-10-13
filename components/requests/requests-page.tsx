@@ -439,13 +439,6 @@ export function RequestsPage() {
     [lookups, now, persona.id]
   )
 
-  const description =
-    persona.id === "supplier"
-      ? "Requests distributed to Instawork. Confirm Pros to fill, work orders are created automatically, no job-seeker uploads."
-      : persona.id === "program"
-        ? "Every FlexForce request across the program, with live staffing and approval status."
-        : "Every staffing request across your venues. Post in under a minute, rates, check-in details and approvals are handled for you."
-
   const filtersActive =
     venueFilter !== "all" ||
     positionFilter !== "all" ||
@@ -456,7 +449,6 @@ export function RequestsPage() {
     <>
       <PageHeader
         title="Requests"
-        description={description}
         actions={
           <>
             <Button

@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/app/misc"
 import { StatusBadge } from "@/components/app/status-badge"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardAction, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@/components/ui/item"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { formatClock } from "@/lib/dates"
@@ -38,9 +38,6 @@ export function NeedsAttention({ items, personaId, isToday, nextGap, className }
     <Card className={cn("gap-0 py-0", className)}>
       <CardHeader className="border-b py-4">
         <CardTitle>Needs attention</CardTitle>
-        <CardDescription>
-          {items.length ? "Late Pros, no-shows and gaps starting within 3 hours" : isToday ? "Nothing needs you right now" : "Nothing flagged for this day"}
-        </CardDescription>
         {items.length ? (
           <CardAction>
             <Badge variant={urgent ? "destructive" : "secondary"} className="tabular">

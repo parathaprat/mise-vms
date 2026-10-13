@@ -221,8 +221,8 @@ function InvoiceDetailBody({ invoice }: { invoice: Invoice }) {
         />
         <aside className="flex flex-col gap-4" data-print="hide" aria-label="Invoice status and traceability">
           <StatusTimelineCard invoice={invoice} payment={payment} payDate={payDate} />
-          <PaymentCard invoice={invoice} payment={payment} totals={totals} persona={persona} payDate={payDate} />
-          <DisputesCard invoice={invoice} persona={persona} canResolve={canResolve} onResolve={setResolving} />
+          <PaymentCard invoice={invoice} payment={payment} totals={totals} payDate={payDate} />
+          <DisputesCard invoice={invoice} canResolve={canResolve} onResolve={setResolving} />
           <TraceabilityCard invoice={invoice} entryMap={entryMap} tipMap={tipMap} workerSupplier={workerSupplier} />
         </aside>
       </div>

@@ -40,7 +40,6 @@ export function QualityCard({ quality, noShowRate, shifts, currentWeek }: Qualit
   return (
     <ChartCard
       title="Quality"
-      description="No-shows, late arrivals and disputes raised, per week."
       empty={
         !hasWeeks
           ? {

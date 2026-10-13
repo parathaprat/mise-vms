@@ -702,8 +702,7 @@ export function RequestComposer() {
     <>
       <PageHeader
         eyebrow="New request"
-        title="Post shifts in under a minute"
-        description="Describe what you need or fill in the form. Rates come from the rate card, check-in details from the cost center, and approvals route themselves."
+        title="Request staff"
         actions={
           <Button variant="ghost" asChild>
             <Link href="/requests">Cancel</Link>
@@ -719,10 +718,6 @@ export function RequestComposer() {
                 <WandSparklesIcon className="size-4 text-primary" />
                 Describe it
               </CardTitle>
-              <CardDescription>
-                Type it the way you&apos;d text your staffing lead. Mise fills
-                the form.
-              </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
               <InputGroup>
@@ -806,7 +801,6 @@ export function RequestComposer() {
             pulse={composer.pulse}
             step={1}
             title="Where"
-            description="Shifts land in this cost center for billing, no mapping spreadsheets."
           >
             <FieldGroup className="grid gap-4 sm:grid-cols-2">
               <Field>
@@ -865,7 +859,6 @@ export function RequestComposer() {
             pulse={composer.pulse}
             step={2}
             title="Who"
-            description="Bill rates come straight from the published rate card."
           >
             <FieldGroup className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_200px]">
               <Field>
@@ -1129,7 +1122,6 @@ export function RequestComposer() {
             pulse={composer.pulse}
             step={3}
             title="When"
-            description="Add as many dates as you need, each date gets its own shifts."
           >
             <div className="flex flex-col gap-4">
               <div className="flex flex-wrap items-center gap-2">
@@ -1277,9 +1269,6 @@ export function RequestComposer() {
                   value={draft.eventName}
                   onChange={(e) => update("eventName", e.target.value)}
                 />
-                <FieldDescription>
-                  Shown to Pros and on invoices, tips and the schedule.
-                </FieldDescription>
               </Field>
             </div>
           </StepCard>
@@ -1287,7 +1276,6 @@ export function RequestComposer() {
           <StepCard
             step={4}
             title="Shift briefing"
-            description="Prefilled from the cost center. Edit for this request only."
           >
             <FieldGroup className="grid gap-4 md:grid-cols-2">
               <Field className="md:col-span-2">
@@ -1348,7 +1336,6 @@ export function RequestComposer() {
           <StepCard
             step={5}
             title="Choose an agency"
-            description="Mise compares safety readiness, nearby coverage, past outcomes and rate. Pick the best fit, with no bid desk."
           >
             <div className="flex flex-col gap-2">
               {agencyOffers.length === 0 ? (
@@ -1415,13 +1402,6 @@ export function RequestComposer() {
                   </div>
                 )
               })}
-              {selectedOffer ? (
-                <p className="text-xs text-muted-foreground">
-                  Why this recommendation: {selectedOffer.reason}. If this
-                  agency cannot fill, Mise opens the remaining shifts to the
-                  next safety-ready agency automatically.
-                </p>
-              ) : null}
             </div>
           </StepCard>
         </div>
@@ -1568,9 +1548,6 @@ export function RequestComposer() {
                       : "All clear"}
                 </span>
               </CardTitle>
-              <CardDescription>
-                Safety, rate, budget and shift details are checked as you type.
-              </CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="flex flex-col gap-2.5">

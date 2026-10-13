@@ -46,7 +46,6 @@ import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -612,10 +611,6 @@ function ActivityTab({ view }: { view: RequestView }) {
       <Card>
         <CardHeader>
           <CardTitle>Timeline</CardTitle>
-          <CardDescription>
-            Every change, fill and message on this request, the audit trail is
-            built in.
-          </CardDescription>
         </CardHeader>
         <CardContent>
           {items.length === 0 ? (
@@ -678,10 +673,6 @@ function ActivityTab({ view }: { view: RequestView }) {
       <Card className="self-start">
         <CardHeader>
           <CardTitle>Message the team</CardTitle>
-          <CardDescription>
-            Venue, program office and suppliers see the same thread, no side
-            emails.
-          </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
           <Textarea
@@ -727,7 +718,6 @@ function DetailsTab({ view }: { view: RequestView }) {
       <Card>
         <CardHeader>
           <CardTitle>Shift briefing</CardTitle>
-          <CardDescription>Exactly what Pros see in the app.</CardDescription>
         </CardHeader>
         <CardContent>
           <dl className="grid gap-4">
@@ -745,9 +735,6 @@ function DetailsTab({ view }: { view: RequestView }) {
         <Card>
           <CardHeader>
             <CardTitle>Rates</CardTitle>
-            <CardDescription>
-              Awarded within the published rate card, transparent end to end.
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
@@ -776,9 +763,6 @@ function DetailsTab({ view }: { view: RequestView }) {
         <Card>
           <CardHeader>
             <CardTitle>Agency &amp; safety</CardTitle>
-            <CardDescription>
-              Who received the work, and why they were eligible.
-            </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             {agency ? (

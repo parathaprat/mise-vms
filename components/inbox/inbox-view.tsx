@@ -29,9 +29,6 @@ import { InboxList, optionId } from "./inbox-list"
 import { INBOX_GROUPS, groupCounts, inGroup, openHref, parseGroup, visibleGroups, type InboxGroup } from "./kinds"
 import { useIsDesktop } from "./use-is-desktop"
 
-const DESCRIPTION =
-  "Every decision waiting on you, from timesheets and tips to approvals, invoices and staffing gaps, in one keyboard-friendly queue."
-
 const ZERO_ACTION: Record<PersonaId, { href: string; label: string; icon: LucideIcon }> = {
   venue: { href: "/schedule", label: "Open the schedule", icon: CalendarRangeIcon },
   program: { href: "/insights", label: "Review program insights", icon: ChartColumnIcon },
@@ -253,7 +250,6 @@ function InboxWorkspace({ persona }: { persona: Persona }) {
     <>
       <PageHeader
         title="Inbox"
-        description={DESCRIPTION}
         actions={
           items.length > 0 ? (
             <>

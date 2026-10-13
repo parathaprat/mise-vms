@@ -3,11 +3,9 @@
 import * as React from "react"
 import Link from "next/link"
 import {
-  ArrowRightIcon,
   HandshakeIcon,
   LayersIcon,
   ShieldAlertIcon,
-  StarIcon,
   TimerIcon,
   UserRoundXIcon,
   ZapIcon,
@@ -19,9 +17,9 @@ import { PageHeader } from "@/components/app/page-header"
 import { StatCard } from "@/components/app/stat-card"
 import { BlurFade } from "@/components/ui/blur-fade"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { useData, usePersona, usePolicies } from "@/hooks/use-demo"
+import { useData, usePersona } from "@/hooks/use-demo"
 import { num, pct, plural } from "@/lib/format"
 import { PROGRAM_NAME } from "@/lib/reference"
 import type { ISODate, Supplier } from "@/lib/types"
@@ -30,12 +28,9 @@ import { cn } from "@/lib/utils"
 import { coiStatus, receivesRequests, SCORE_WINDOW_DAYS, supplierScorecards, type SupplierScore } from "../program-data"
 import { IconTile, RestrictedState, SectionHeading, useDialogState, useToday } from "../shared"
 import { SupplierCard } from "./supplier-card"
-import { formatWindow } from "./supplier-format"
 import { SupplierSheet } from "./supplier-sheet"
 
 type SortKey = "tier" | "score" | "spend"
-
-const DESCRIPTION = `Scorecards, compliance and distribution for every ${PROGRAM_NAME} supplier, measured on real shift outcomes, not self-reported numbers.`
 
 const NO_SHOW_TARGET = 0.025
 
@@ -44,10 +39,10 @@ export function SuppliersPage() {
   if (persona.id === "venue") {
     return (
       <>
-        <PageHeader title="Suppliers" description={DESCRIPTION} />
+        <PageHeader title="Suppliers" />
         <RestrictedState
           title="Supplier scorecards are managed by the program office"
-          description={`The ${PROGRAM_NAME} program office manages supplier performance, compliance and distribution. Your requests are routed to qualified suppliers automatically.`}
+          description={`The ${PROGRAM_NAME} program office manages this list.`}
           href="/requests"
           cta="View requests"
         />
@@ -57,10 +52,10 @@ export function SuppliersPage() {
   if (persona.id === "supplier") {
     return (
       <>
-        <PageHeader title="Suppliers" description={DESCRIPTION} />
+        <PageHeader title="Suppliers" />
         <RestrictedState
           title={`This area is for the ${PROGRAM_NAME} program office`}
-          description="Your fill rate, no-show rate and on-time arrival are on Insights, measured exactly the way the program office sees them."
+          description="Your performance is in Insights."
           href="/insights"
           cta="Open Insights"
         />
@@ -103,8 +98,6 @@ function SuppliersView() {
   const shifts = useData((d) => d.shifts)
   const timeEntries = useData((d) => d.timeEntries)
   const requests = useData((d) => d.requests)
-  const costCenters = useData((d) => d.costCenters)
-  const policies = usePolicies()
   const today = useToday()
 
   const [sort, setSort] = React.useState<SortKey>("tier")
@@ -150,9 +143,6 @@ function SuppliersView() {
     scores,
     "tier"
   )
-  const activeCostCenters = costCenters.filter((c) => c.active)
-  const favoritesFirst = activeCostCenters.filter((c) => c.favoritesFirst).length
-  const windowLabel = formatWindow(policies.tier1ExclusiveMinutes)
   const shareRows = suppliers
     .map((s) => ({ supplier: s, filled: scores.get(s.id)?.filled ?? 0 }))
     .sort((a, b) => b.filled - a.filled)
@@ -163,7 +153,6 @@ function SuppliersView() {
     <>
       <PageHeader
         title="Suppliers"
-        description={DESCRIPTION}
         actions={
           <Button variant="outline" asChild>
             <Link href="/policies#distribution">
@@ -218,7 +207,7 @@ function SuppliersView() {
         <SectionHeading
           id="scorecards-heading"
           title="Scorecards"
-          description={`Last ${SCORE_WINDOW_DAYS} days. Grades weigh no-shows first, then on-time arrival and timesheet disputes.`}
+          description={`Last ${SCORE_WINDOW_DAYS} days`}
           action={
             <ToggleGroup
               type="single"
@@ -250,44 +239,32 @@ function SuppliersView() {
       <div className="grid gap-4 lg:grid-cols-5">
         <Card className="lg:col-span-3">
           <CardHeader>
-            <CardTitle>How a new request is distributed</CardTitle>
-            <CardDescription>Mise tenders every request automatically, no supplier emails, no manual work orders.</CardDescription>
+            <CardTitle>How an agency is chosen</CardTitle>
           </CardHeader>
           <CardContent>
             <ol className="flex flex-col">
               <CascadeStep
                 step={1}
-                icon={StarIcon}
-                title="Venue favorites first"
-                description={`${favoritesFirst} of ${plural(activeCostCenters.length, "active cost center")} offer shifts to their favorite Pros first, whichever supplier employs them.`}
+                icon={ShieldAlertIcon}
+                title="Safety gate"
+                description={`${kpis.receiving} insured agencies can receive work. Expired insurance is excluded.`}
               />
               <CascadeStep
                 step={2}
                 icon={TimerIcon}
-                title={`Tier 1 exclusive window · ${windowLabel}`}
-                description={`New requests go to Tier 1 alone for the first ${policies.tier1ExclusiveMinutes} minutes. Rush requests starting within ${policies.rushLeadTimeHours} hours skip the window.`}
-              >
-                <SupplierChips suppliers={tier1} today={today} onOpen={sheet.show} />
-              </CascadeStep>
+                title="Best fit"
+                description="Ready workers, reliability, fill history and rate."
+              />
               <CascadeStep
                 step={3}
                 icon={LayersIcon}
-                title="Tier 2 & 3 cascade"
-                description="Seats still open cascade to every active supplier serving the venue's market with a current certificate of insurance."
+                title="Fallback"
+                description="Only unfilled shifts open to the next eligible agency."
               >
                 <SupplierChips suppliers={cascade} today={today} onOpen={sheet.show} />
               </CascadeStep>
             </ol>
           </CardContent>
-          <CardFooter className="justify-between gap-3">
-            <span className="text-xs text-muted-foreground">Window and rush thresholds live in Policies.</span>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/policies#distribution">
-                Edit rules
-                <ArrowRightIcon data-icon="inline-end" />
-              </Link>
-            </Button>
-          </CardFooter>
         </Card>
 
         <Card className="lg:col-span-2">

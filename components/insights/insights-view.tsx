@@ -132,7 +132,6 @@ export function InsightsView() {
     <>
       <PageHeader
         title="Insights"
-        description="Spend, fill, quality and cycle times for your scope, updated live as shifts are worked."
         actions={
           <InsightsFilters
             persona={persona}
@@ -167,7 +166,7 @@ export function InsightsView() {
           isSupplier={isSupplier}
           currentWeek={currentWeek}
         />
-        <FillCard fill={insights.fill} isSupplier={isSupplier} />
+        <FillCard fill={insights.fill} />
         <PositionsCard
           positions={insights.positions}
           totalHours={insights.kpis.hours}

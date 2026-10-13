@@ -247,13 +247,11 @@ export function SupplierHome() {
       <HomeSection
         eyebrow="Right now"
         title="Fill and respond"
-        description="The shifts you can fill and the questions waiting on you."
       >
         <div className="grid items-stretch gap-4 xl:grid-cols-3">
           <SectionCard
             className="h-full min-w-0 xl:col-span-2"
             title="Orders to fill"
-            description="Soonest first. Assign Pros from the request page, confirmations create work orders instantly."
             action={
               <ViewAllButton href="/requests?tab=open" label="All open" />
             }
@@ -329,7 +327,6 @@ export function SupplierHome() {
                   ) : null}
                 </span>
               }
-              description="Disputes venues raised on your Pros' hours."
               action={
                 <ViewAllButton
                   href="/timesheets?tab=disputed"
@@ -347,7 +344,6 @@ export function SupplierHome() {
             </SectionCard>
             <SectionCard
               title="Payments"
-              description="Auto-matched to invoices."
               action={
                 <ViewAllButton href="/invoices?tab=payments" label="All" />
               }
@@ -393,13 +389,11 @@ export function SupplierHome() {
       <HomeSection
         eyebrow="Performance"
         title="Keep quality on track"
-        description="How venues experience your Pros and what just changed."
       >
         <div className="grid items-stretch gap-4 xl:grid-cols-3">
           <SectionCard
             className="h-full"
             title="Your scorecard"
-            description="How Compass venues experience your Pros, last 30 days."
             contentClassName="grid flex-1 grid-cols-2 gap-3"
           >
             {[
@@ -427,7 +421,6 @@ export function SupplierHome() {
           <SectionCard
             className="h-full xl:col-span-2"
             title="Recent activity"
-            description="Confirmations, check-ins and decisions on your orders."
           >
             <ActivityFeed items={activities} limit={5} />
           </SectionCard>

@@ -5,7 +5,6 @@ import * as React from "react"
 import { BrandMark } from "@/components/app/brand"
 import { CopilotPanel } from "@/components/copilot/copilot-panel"
 import { bumpClock } from "@/hooks/use-demo"
-import { PROGRAM_NAME } from "@/lib/reference"
 import { useStore } from "@/lib/store"
 
 import { HelpSheet } from "@/components/onboarding/help-sheet"
@@ -27,8 +26,7 @@ function Splash() {
           <BrandMark className="relative size-12" />
         </div>
         <div className="flex flex-col gap-1">
-          <p className="font-heading text-lg font-semibold tracking-tight">Setting the table</p>
-          <p className="text-sm text-shimmer">Loading {PROGRAM_NAME} venues, rate cards, Pros and this week&apos;s shifts…</p>
+          <p className="font-heading text-lg font-semibold tracking-tight">Loading Mise</p>
         </div>
       </div>
     </div>

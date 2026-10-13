@@ -29,13 +29,11 @@ export function SpendCard({ spend, isSupplier, currentWeek }: SpendCardProps) {
     () => Object.fromEntries(spend.series.map((s) => [s.key, { label: s.label, color: s.color }])),
     [spend.series]
   )
-  const by = spend.dimension === "venue" ? "venue" : "cost center"
   const lastKey = spend.series[spend.series.length - 1]?.key
 
   return (
     <ChartCard
       title={isSupplier ? "Weekly billings" : "Weekly spend"}
-      description={`Labor at bill rate plus approved tips, by ${by}.`}
       action={
         spend.total > 0 ? (
           <div className="flex flex-col items-end">

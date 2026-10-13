@@ -128,11 +128,6 @@ export function InvoicesView() {
     <>
       <PageHeader
         title="Invoices"
-        description={
-          isSupplier
-            ? "Receivables from Compass FlexForce, every payment arrives pre-matched to its invoices."
-            : "Weekly consolidated invoices built from approved timesheets and tips. Every line traces back to a shift, a Pro and an approver, so payments match themselves."
-        }
         actions={
           <Button variant="outline" onClick={exportCsv}>
             <DownloadIcon data-icon="inline-start" />

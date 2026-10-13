@@ -42,7 +42,6 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useData, useLookups, useNow, usePersona, usePolicies } from "@/hooks/use-demo"
 import { formatDateList, parseLocal, toISODate } from "@/lib/dates"
 import { hours, money, num, pct, plural, workerName } from "@/lib/format"
-import { PROGRAM_NAME } from "@/lib/reference"
 import { entryInScope } from "@/lib/selectors"
 import type { Persona, PersonaId, Venue } from "@/lib/types"
 import { cn } from "@/lib/utils"
@@ -71,13 +70,6 @@ import {
 } from "./model"
 import { ReassignDialog } from "./reassign-dialog"
 import { RespondDialog } from "./respond-dialog"
-
-const DESCRIPTIONS: Record<PersonaId, string> = {
-  venue:
-    "Hours land here the moment a shift ends, captured by geofenced clock-in. Review the exceptions, approve the rest in one click. No weekly TITO uploads, no Draft/Final locks.",
-  supplier: `Hours your Pros worked on ${PROGRAM_NAME} shifts, see what's approved, invoiced, or disputed.`,
-  program: `Every hour worked across ${PROGRAM_NAME} venues, captured on site, approved by venues, invoiced weekly. Watch exceptions and disputes program-wide.`,
-}
 
 const RANGES: { value: DateRange; label: string }[] = [
   { value: "7d", label: "7 days" },
@@ -294,7 +286,6 @@ function TimesheetsWorkspace({ persona }: { persona: Persona }) {
     <>
       <PageHeader
         title="Timesheets"
-        description={DESCRIPTIONS[persona.id]}
         actions={
           <>
             <Button variant="outline" onClick={exportCsv}>
