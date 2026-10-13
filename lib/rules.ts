@@ -13,6 +13,7 @@ import type {
   Venue,
   Worker,
 } from "@/lib/types"
+import { backgroundCheckState, workerSafetyReady } from "@/lib/safety"
 
 export function billFromPay(pay: number, markupPct: number): number {
   return round2(pay * (1 + markupPct))
@@ -171,6 +172,16 @@ export function certStatus(worker: Worker, cert: CertType, today: string): CertS
 export function eligibilityIssues(worker: Worker, ctx: EligibilityContext): string[] {
   const issues: string[] = []
   if (worker.status !== "Active") issues.push(`${worker.status}, not yet cleared to work`)
+  const background = backgroundCheckState(worker, ctx.today)
+  if (background === "pending") issues.push("Background check pending")
+  if (background === "expired") issues.push("Background check expired")
+  if (
+    background === "ready" &&
+    !workerSafetyReady(worker, ctx.today) &&
+    worker.onboarding.some((item) => item.status === "Pending")
+  ) {
+    issues.push("Safety onboarding incomplete")
+  }
   if (!worker.positionIds.includes(ctx.position.id)) issues.push(`Not qualified as ${ctx.position.title}`)
   if (worker.metro !== ctx.venue.metro) issues.push("Outside venue market")
   if (ctx.blocked.has(worker.id)) issues.push("On this venue's do-not-return list")

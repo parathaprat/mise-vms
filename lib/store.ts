@@ -7,7 +7,7 @@ import { persist, type PersistStorage, type StorageValue } from "zustand/middlew
 import { DATA_VERSION, makeIdFactory, type DemoData } from "@/lib/data"
 import { buildAgencyOffers } from "@/lib/agencies"
 import { formatClock, parseLocal, shiftWindow, toISODate, toLocal } from "@/lib/dates"
-import { advance, fateFor, jitterFor } from "@/lib/engine"
+import { advance, candidateWorkers, fateFor, jitterFor } from "@/lib/engine"
 import { money, round2, workerName } from "@/lib/format"
 import { lineTotals } from "@/lib/invoice"
 import { PERSONAS } from "@/lib/reference"
@@ -462,6 +462,27 @@ export const useStore = create<StoreState>()(
               for (const workerId of requested) {
                 const mine = shifts.filter((s) => s.slot === idx + 1)
                 for (const s of mine) {
+                  const booked = new Set(
+                    [...data.shifts, ...shifts]
+                      .filter(
+                        (other) =>
+                          other.id !== s.id &&
+                          other.date === s.date &&
+                          !!other.workerId &&
+                          other.status !== "Cancelled"
+                      )
+                      .map((other) => other.workerId!)
+                  )
+                  const eligible = candidateWorkers({
+                    data,
+                    request: req,
+                    venue,
+                    position,
+                    booked,
+                    today: s.date,
+                    rand: () => 0.5,
+                  }).some((worker) => worker.id === workerId)
+                  if (!eligible) continue
                   s.workerId = workerId
                   s.status = "Confirmed"
                   s.assignedAt = now
@@ -655,7 +676,37 @@ export const useStore = create<StoreState>()(
           mutate(({ data, log, who }) => {
             const shift = data.shifts.find((s) => s.id === shiftId)
             const worker = data.workers.find((w) => w.id === workerId)
-            if (!shift || !worker) return
+            const request = shift
+              ? data.requests.find((item) => item.id === shift.requestId)
+              : undefined
+            const venue = request
+              ? data.venues.find((item) => item.id === request.venueId)
+              : undefined
+            const position = request
+              ? data.positions.find((item) => item.id === request.positionId)
+              : undefined
+            if (!shift || !worker || !request || !venue || !position) return
+            const booked = new Set(
+              data.shifts
+                .filter(
+                  (item) =>
+                    item.id !== shift.id &&
+                    item.date === shift.date &&
+                    !!item.workerId &&
+                    item.status !== "Cancelled"
+                )
+                .map((item) => item.workerId!)
+            )
+            const eligible = candidateWorkers({
+              data,
+              request,
+              venue,
+              position,
+              booked,
+              today: shift.date,
+              rand: () => 0.5,
+            }).some((item) => item.id === workerId)
+            if (!eligible) return
             log({ kind: "fill", text: `${who} assigned ${workerName(worker)} to ${shift.requestId}`, requestId: shift.requestId, workerId })
             return {
               ...data,
