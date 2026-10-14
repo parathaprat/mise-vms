@@ -21,7 +21,7 @@ To see first-run onboarding again, choose **Help → Restart onboarding**, or cl
 
 ## Try it on Replit
 
-1. Import `https://github.com/parathaprat/mise` into Replit.
+1. Import `https://github.com/parathaprat/mise-vms` into Replit.
 2. Select **Run** to preview it.
 3. Open **Publishing**, keep the default **Autoscale** deployment, and select **Publish**.
 
